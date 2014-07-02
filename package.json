@@ -5,7 +5,7 @@
   "description": "",
   "author": "Pablo Martin <caedes@sindominio.net>",
   "script": {
-    "test": ""
+    "test": "./node_modules/jasmine-node/bin/jasmine-node ."
   },
   "main": "stealth.js",
   "repository": {
@@ -21,7 +21,12 @@
     "stealth address"
   ],
   "dependencies": {
+    "crypto-js": "~3.1.2",
     "bitcoinjs-lib": "~0.2.0"
+  },
+  "devDependencies": {
+    "jasmine-node": "~1.14.3",
+    "coveralls": "~2.10.0"
   },
   "license": "AGPLv3+"
 }

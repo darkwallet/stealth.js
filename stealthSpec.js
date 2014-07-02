@@ -3,7 +3,8 @@
  */
 'use strict';
 
-define(['util/stealth', 'bitcoinjs-lib'], function(Stealth, Bitcoin) {
+  var Stealth = require('./stealth');
+  var Bitcoin = require('bitcoinjs-lib');
 
   // Data for the test
   var ephemKeyBytes = [95, 112, 167, 123, 50, 38, 10, 122, 50, 198, 34, 66, 56, 31, 186, 44, 244, 12, 14, 32, 158, 102, 90, 121, 89, 65, 142, 174, 79, 45, 162, 43, 1];
@@ -82,7 +83,7 @@ define(['util/stealth', 'bitcoinjs-lib'], function(Stealth, Bitcoin) {
 
       expect(keyBytes).toEqual([3, 5, 246, 185, 154, 68, 162, 189, 236, 139, 72, 79, 252, 238, 86, 28, 249, 160, 195, 183, 234, 146, 234, 142, 99, 52, 230, 251, 196, 241, 193, 120, 153]);
 
-      var keyHash = Bitcoin.crypto.hash160(keyBytes);
+      var keyHash = Bitcoin.Util.sha256ripe160(keyBytes);
       var address = new Bitcoin.Address(keyHash);
 
       expect(address.toString()).toBe("1Gvq8pSTRocNLDyf858o4PL3yhZm5qQDgB");
@@ -92,7 +93,7 @@ define(['util/stealth', 'bitcoinjs-lib'], function(Stealth, Bitcoin) {
       var privKey = Stealth.uncoverPrivate(scanKeyBytes, ephemKeyPubBytes, spendKeyBytes);
       var keyBytes = privKey.getPub().toBytes();
 
-      var keyHash = Bitcoin.crypto.hash160(keyBytes);
+      var keyHash = Bitcoin.Util.sha256ripe160(keyBytes);
       var address = new Bitcoin.Address(keyHash);
       expect(address.toString()).toBe("1Gvq8pSTRocNLDyf858o4PL3yhZm5qQDgB");
     });
@@ -173,4 +174,4 @@ define(['util/stealth', 'bitcoinjs-lib'], function(Stealth, Bitcoin) {
       expect(newTx.outs[0].script.buffer)
     });
   });
-});
+

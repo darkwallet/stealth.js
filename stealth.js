@@ -3,7 +3,8 @@
  */
 'use strict';
 
-define(['bitcoinjs-lib'], function(Bitcoin) {
+var Bitcoin = require('bitcoinjs-lib');
+Bitcoin.CryptoJS = require('crypto-js');
 
 var bufToArray = function(obj) {return Array.prototype.slice.call(obj, 0);};
 
@@ -148,7 +149,7 @@ Stealth.initiateStealth = function(scanKeyBytes, spendKeyBytes, version, ephemKe
     // Now generate pubkey and address
     var pubKey = Stealth.derivePublicKey(spendKey, c);
 
-    var mpKeyHash = Bitcoin.crypto.hash160(pubKey);
+    var mpKeyHash = Bitcoin.Util.sha256ripe160(pubKey);
     var address = new Bitcoin.Address(mpKeyHash, version);
     return [address, ephemKey, pubKey];
 };
@@ -245,7 +246,7 @@ Stealth.deriveAddress = function(spendKey, c, version) {
     var bytes = this.derivePublicKey(spendKey, c);
 
     // Turn to address
-    var mpKeyHash = Bitcoin.crypto.hash160(bytes);
+    var mpKeyHash = Bitcoin.Util.sha256ripe160(bytes);
     var address = new Bitcoin.Address(mpKeyHash, version);
     return address;
 };
@@ -347,7 +348,7 @@ Stealth.addStealth = function(recipient, newTx, addressVersion, nonceVersion, ep
             var nonceBytes = convert.numToBytes(nonce, 4);
 
             // Hash the nonce 
-            outHash = bufToArray(Bitcoin.crypto.hash160(nonceBytes.concat(ephemKey)));
+            outHash = bufToArray(Bitcoin.Util.sha256ripe160(nonceBytes.concat(ephemKey)));
         } while(iters < maxNonce && !Stealth.checkPrefix(outHash, stealthPrefix));
 
     } while(!Stealth.checkPrefix(outHash, stealthPrefix));
@@ -358,5 +359,4 @@ Stealth.addStealth = function(recipient, newTx, addressVersion, nonceVersion, ep
     return {address: recipient, ephemKey: ephemKey, pubKey: pubKey};
 };
 
-return Stealth;
-});
+module.exports = Stealth;
