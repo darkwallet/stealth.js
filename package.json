@@ -1,0 +1,27 @@
+{
+  "name": "stealth.js",
+  "version": "0.5.0",
+
+  "description": "",
+  "author": "Pablo Martin <caedes@sindominio.net>",
+  "script": {
+    "test": ""
+  },
+  "main": "stealth.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/darkwallet/stealth.js"
+  },
+  "bugs": {
+    "url": "https://github.com/darkwallet/stealth.js/issues"
+  },
+  "keybords": [
+    "bitcoin",
+    "privacy",
+    "stealth address"
+  ],
+  "dependencies": {
+    "bitcoinjs-lib": "~0.2.0"
+  },
+  "license": "AGPLv3+"
+}
