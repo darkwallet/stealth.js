@@ -1,5 +1,4 @@
-StealthJS [![Build Status](https://drone.io/github.com/darkwallet/stealth.js/status.png)](https://drone.io/github.com/darkwallet/stealth.js/latest) 
-[![Coverage Status](https://img.shields.io/coveralls/darkwallet/stealth.js.svg)](https://coveralls.io/r/darkwallet/stealth.js)
+StealthJS [![Build Status](https://drone.io/github.com/darkwallet/stealth.js/status.png)](https://drone.io/github.com/darkwallet/stealth.js/latest) [![Coverage Status](https://img.shields.io/coveralls/darkwallet/stealth.js.svg)](https://coveralls.io/r/darkwallet/stealth.js)
 =========
 
 Stealth addresses are a new form of bitcoin addresses that solve the problem of address reuse.
