@@ -3,6 +3,14 @@
  */
 'use strict';
 
+if (typeof module === 'object' && typeof define !== 'function') {
+    var define = function (factory) {
+        module.exports = factory(require, exports, module);
+    };
+}
+
+define(function (require, exports, module) {
+
 var Bitcoin = require('bitcoinjs-lib');
 Bitcoin.CryptoJS = require('crypto-js');
 
@@ -359,4 +367,6 @@ Stealth.addStealth = function(recipient, newTx, addressVersion, nonceVersion, ep
     return {address: recipient, ephemKey: ephemKey, pubKey: pubKey};
 };
 
-module.exports = Stealth;
+return Stealth;
+
+});
