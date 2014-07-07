@@ -11,6 +11,17 @@ You can see how a stealth transaction [looks like](https://blockchain.info/tx/6e
 
 **Note:** OP_RETURN is just supported as standard in the bitcoin network in recent versions of the mining software, so not all miners will confirm or propagate the transactions, this means at this moment sometimes they can take a bit longer to confirm. Also you probably won't see the unconfirmed transaction, but this is more an issue in our obelisk interaction or in obelisk.
 
+Installation
+------------
+
+You can install it using npm:
+
+```
+$ npm install stealth.js --save
+```
+
+And require it as a *node module* or as *AMD*.
+
 ![How Stealth Addresses Work](https://i.imgur.com/rHhNKL6.jpg)
 
 More information at [DarkWallet/Stealth](https://wiki.unsystem.net/en/index.php/DarkWallet/Stealth). 
