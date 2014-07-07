@@ -1,8 +1,8 @@
 {
   "name": "stealth.js",
-  "version": "0.5.0",
+  "version": "0.5.1",
 
-  "description": "",
+  "description": "Javascript module with stealth implementation compatible with bitcoinjs-lib",
   "author": "Pablo Martin <caedes@sindominio.net>",
   "scripts": {
     "test": "./node_modules/grunt-cli/bin/grunt jasmine_node"
