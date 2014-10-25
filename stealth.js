@@ -361,7 +361,7 @@ Stealth.addStealth = function(recipient, newTx, addressVersion, nonceVersion, ep
             var nonceBytes = convert.numToBytes(nonce, 4);
 
             // Hash the nonce 
-            outHash = bufToArray(Bitcoin.crypto.hash160(nonceBytes.concat(ephemKey)));
+            outHash = bufToArray(Bitcoin.crypto.hash160(convert.bytesToBin(nonceBytes.concat(ephemKey))));
         } while(iters < maxNonce && !Stealth.checkPrefix(outHash, stealthPrefix));
 
     } while(!Stealth.checkPrefix(outHash, stealthPrefix));
