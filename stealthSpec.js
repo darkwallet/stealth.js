@@ -5,6 +5,8 @@
 
   var Stealth = require('./stealth');
   var Bitcoin = require('./bitcoinjs-lib-wrapper');
+  var BigInteger = require('bigi');
+  var Buffer = require('buffer').Buffer;
 
   var bufToArray = function(obj) {return Array.prototype.slice.call(obj, 0);};
 
@@ -106,14 +108,14 @@
       var privKey = Stealth.uncoverPrivate(scanKeyBytes, ephemKeyPubBytes, spendKeyBytes);
       var keyBytes = privKey.pub.toBytes();
 
-      var keyHash = Bitcoin.crypto.hash160(new Bitcoin.Buffer(keyBytes));
+      var keyHash = Bitcoin.crypto.hash160(new Buffer(keyBytes));
       var address = new Bitcoin.Address(keyHash, Bitcoin.networks.bitcoin.pubKeyHash);
       expect(address.toString()).toBe("1Gvq8pSTRocNLDyf858o4PL3yhZm5qQDgB");
     });
 
     it('derives public key from spend key and shared secret', function() {
       var spendKey = Bitcoin.ECPubKey.fromBytes(spendKeyPubBytes);
-      var c = new Bitcoin.BigInteger("10000");
+      var c = new BigInteger("10000");
       var keyBytes = Stealth.derivePublicKey(spendKey, c);
 
       expect(bufToArray(keyBytes)).toEqual([3, 173, 36, 66, 71, 110, 69, 203, 135, 107, 57, 44, 117, 28, 232, 195, 123, 20, 36, 239, 18, 50, 107, 196, 154, 84, 37, 176, 43, 123, 246, 179, 204]);
@@ -121,7 +123,7 @@
     
     it('derives a bitcoin address from spendkey and shared secret', function() {
       var spendKey = Bitcoin.ECPubKey.fromBytes(spendKeyPubBytes);
-      var c = new Bitcoin.BigInteger("1000");
+      var c = new BigInteger("1000");
       var address = Stealth.deriveAddress(spendKey, c);
 
       expect(address.toString()).toBe("1EKg16C2fVCDK8GGzABsSbVVAeL1z7yrAh");

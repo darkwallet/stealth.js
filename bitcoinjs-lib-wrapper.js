@@ -13,13 +13,13 @@ if (typeof module === 'object' && typeof define !== 'function') {
 
 define(function(require) {
     var Bitcoin = require('bitcoinjs-lib');
-    Bitcoin.BigInteger = require('bigi');
-    Bitcoin.Buffer = require('buffer').Buffer;
-    Bitcoin.convert = require('./convert');
+    var BigInteger = require('bigi');
+    var Buffer = require('buffer').Buffer;
+    var base58check = require('bs58check');
     
     Bitcoin.Address.validate = function(address) {
         try {
-            Bitcoin.base58check.decode(address);
+            base58check.decode(address);
             return true;
         } catch (e) {
             return false;
@@ -47,19 +47,19 @@ define(function(require) {
     }
 
     Bitcoin.Address.getVersion = function(address) {
-        return Bitcoin.base58check.decode(address).readUInt8(0);
+        return base58check.decode(address).readUInt8(0);
     }
 
     Bitcoin.ECKey.fromBytes = function(bytes, compressed) {
         if (!bytes) {
             return Bitcoin.ECKey.makeRandom(compressed);
         }
-        var d = Bitcoin.BigInteger.fromByteArrayUnsigned(bytes.slice(0, 32));
+        var d = BigInteger.fromByteArrayUnsigned(bytes.slice(0, 32));
         if (compressed === null || compressed === undefined) compressed = (bytes[32] === 1);
         return new Bitcoin.ECKey(d, compressed);
     }
     Bitcoin.ECPubKey.fromBytes = function(bytes) {
-        return Bitcoin.ECPubKey.fromBuffer(new Bitcoin.Buffer(bytes));
+        return Bitcoin.ECPubKey.fromBuffer(new Buffer(bytes));
     }
     Bitcoin.ECKey.prototype.toBytes = function() {
          var bytes = this.d.toBuffer().toJSON().data;

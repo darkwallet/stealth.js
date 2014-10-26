@@ -12,11 +12,30 @@ if (typeof module === 'object' && typeof define !== 'function') {
 define(function (require, exports, module) {
 
 var Bitcoin = require('./bitcoinjs-lib-wrapper');
-var CryptoJS = require('crypto-js');
+var BigInteger = require('bigi');
+var base58check = require('bs58check');
+var Buffer = require('buffer').Buffer;
 
 var bufToArray = function(obj) {return Array.prototype.slice.call(obj, 0);};
 
-var convert = Bitcoin.convert;
+var lpad = function(str, padString, length) {
+    while (str.length < length) str = padString + str;
+    return str;
+};
+
+var Convert = {
+    numToBytes: function(num, bytes) {
+        if (bytes === undefined) bytes = 8
+        if (bytes === 0) return []
+        return [num % 256].concat(Convert.numToBytes(Math.floor(num / 256), bytes - 1))
+    },
+    bytesToBin: function(bytes) {
+        if (Buffer.isBuffer(bytes)) bytes = bufToArray(bytes);
+        return bytes.map(function(x) {
+            return lpad(x.toString(2), '0', 8)
+        }).join('');
+    }
+};
 
 var Stealth = {};
  
@@ -53,12 +72,12 @@ Stealth.stealthDH = function(e, decKey) {
     // start the second stage
     var S1;
     if (Stealth.quirk) {
-        S1 = [3].concat(point.affineX.toBuffer().toJSON().data);
+        S1 = new Buffer([3].concat(point.affineX.toBuffer().toJSON().data));
     } else {
         S1 = point.getEncoded(true);
     }
-    var c = convert.wordArrayToBytes(CryptoJS.SHA256(convert.bytesToWordArray(S1)));
-    return Bitcoin.BigInteger.fromByteArrayUnsigned(c);
+    var c = Bitcoin.crypto.sha256(S1);
+    return BigInteger.fromBuffer(c);
 };
 
 
@@ -102,7 +121,7 @@ Stealth.formatAddress = function(scanPubKeyBytes, spendPubKeys, version) {
     stealth = stealth.concat([0]);
     // Encode in base58 and add version
     stealth = [version].concat(stealth);
-    return Bitcoin.base58check.encode(new Bitcoin.Buffer(stealth));
+    return base58check.encode(new Buffer(stealth));
 };
 
 /*
@@ -111,7 +130,7 @@ Stealth.formatAddress = function(scanPubKeyBytes, spendPubKeys, version) {
  */
 Stealth.parseAddress = function(recipient) {
     // TODO perform consistency checks here
-    var stealthBytes = bufToArray(Bitcoin.base58check.decode(recipient).slice(1));
+    var stealthBytes = bufToArray(base58check.decode(recipient).slice(1));
     var options = stealthBytes.splice(0, 1)[0];
     var scanKeyBytes = stealthBytes.splice(0, 33);
     var nSpendKeys = stealthBytes.splice(0, 1)[0];
@@ -175,7 +194,7 @@ Stealth.uncoverStealth = function(scanSecret, ephemKeyBytes) {
     var decKey = Stealth.importPublic(ephemKeyBytes);
 
     // Parse the secret into a BigInteger
-    var priv = Bitcoin.BigInteger.fromByteArrayUnsigned(scanSecret.slice(0, 32));
+    var priv = BigInteger.fromByteArrayUnsigned(scanSecret.slice(0, 32));
 
     // Generate shared secret
     return Stealth.stealthDH(priv, decKey);
@@ -276,10 +295,10 @@ Stealth.buildNonceScript = function(ephemKeyBytes, nonce, version) {
     var chunks = [Bitcoin.opcodes.OP_RETURN];
 
     // Add the nonce chunk
-    var nonceBytes = convert.numToBytes(nonce, 4);
+    var nonceBytes = Convert.numToBytes(nonce, 4);
     var ephemScript = [version];
     ephemScript = ephemScript.concat(nonceBytes.concat(ephemKeyBytes));
-    chunks.push(new Bitcoin.Buffer(ephemScript));    
+    chunks.push(new Buffer(ephemScript));    
 
     return Bitcoin.Script.fromChunks(chunks);
 };
@@ -358,10 +377,10 @@ Stealth.addStealth = function(recipient, newTx, addressVersion, nonceVersion, ep
             if (nonce > maxNonce) {
                 nonce = 0;
             }
-            var nonceBytes = convert.numToBytes(nonce, 4);
+            var nonceBytes = Convert.numToBytes(nonce, 4);
 
             // Hash the nonce 
-            outHash = bufToArray(Bitcoin.crypto.hash160(convert.bytesToBin(nonceBytes.concat(ephemKey))));
+            outHash = bufToArray(Bitcoin.crypto.hash160(Convert.bytesToBin(nonceBytes.concat(ephemKey))));
         } while(iters < maxNonce && !Stealth.checkPrefix(outHash, stealthPrefix));
 
     } while(!Stealth.checkPrefix(outHash, stealthPrefix));
