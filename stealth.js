@@ -18,22 +18,11 @@ var Buffer = require('buffer').Buffer;
 
 var bufToArray = function(obj) {return Array.prototype.slice.call(obj, 0);};
 
-var lpad = function(str, padString, length) {
-    while (str.length < length) str = padString + str;
-    return str;
-};
-
 var Convert = {
     numToBytes: function(num, bytes) {
         if (bytes === undefined) bytes = 8
         if (bytes === 0) return []
         return [num % 256].concat(Convert.numToBytes(Math.floor(num / 256), bytes - 1))
-    },
-    bytesToBin: function(bytes) {
-        if (Buffer.isBuffer(bytes)) bytes = bufToArray(bytes);
-        return bytes.map(function(x) {
-            return lpad(x.toString(2), '0', 8)
-        }).join('');
     }
 };
 
@@ -380,7 +369,7 @@ Stealth.addStealth = function(recipient, newTx, addressVersion, nonceVersion, ep
             var nonceBytes = Convert.numToBytes(nonce, 4);
 
             // Hash the nonce 
-            outHash = bufToArray(Bitcoin.crypto.hash160(Convert.bytesToBin(nonceBytes.concat(ephemKey))));
+            outHash = bufToArray(Bitcoin.crypto.hash160(new Buffer(nonceBytes.concat(ephemKey))));
         } while(iters < maxNonce && !Stealth.checkPrefix(outHash, stealthPrefix));
 
     } while(!Stealth.checkPrefix(outHash, stealthPrefix));
